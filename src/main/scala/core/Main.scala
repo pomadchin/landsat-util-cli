@@ -21,7 +21,6 @@ object Main {
           .withMaxCloudCoverage(config.cloudCoverage)
           .intersects(GeoJson.fromFile[Polygon](config.polygon))
           .collect()
-          .filter(_.imageExistsS3())
           .foreach { img =>
             val lr =
               if(img.imageExistsS3()) img.getFromS3(config.bands)
