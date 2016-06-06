@@ -23,12 +23,14 @@ object Main {
           .collect()
           .filter(_.imageExistsS3())
           .foreach { img =>
-            val lr = img.getFromS3(config.bands)
+            val lr =
+              if(img.imageExistsS3()) img.getFromS3(config.bands)
+              else img.getFromGoogle(config.bands)
             val raster = lr.raster
             if(config.multiband)
               GeoTiff(raster.raster, raster.crs).write(config.output)
             else
-              raster.raster.bands.map { tile =>
+              raster.raster.bands.foreach { tile =>
                 GeoTiff(Raster(tile, raster.extent), raster.crs).write(config.output)
               }
 
