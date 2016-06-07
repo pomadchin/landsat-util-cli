@@ -25,10 +25,10 @@ object Main {
               else img.getFromGoogle(config.bands)
             val raster = lr.raster
             if(config.multiband)
-              GeoTiff(raster.raster, raster.crs).write(s"${config.output}/B_${config.bands.mkString("")}.tif")
+              GeoTiff(raster.raster, raster.crs).write(s"${config.output}/${img.sceneId}_B_${config.bands.mkString("")}.tif")
             else
-              raster.raster.bands.zip(config.bands).foreach { case (tile, i) =>
-                GeoTiff(Raster(tile, raster.extent), raster.crs).write(s"${config.output}/B_${i}.tif")
+              raster.raster.bands.zipWithIndex.foreach { case (tile, i) =>
+                GeoTiff(Raster(tile, raster.extent), raster.crs).write(s"${config.output}/${img.sceneId}_B_${i}.tif")
               }
           }
       }
