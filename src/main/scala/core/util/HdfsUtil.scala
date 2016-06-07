@@ -7,10 +7,6 @@ class HdfsUtil(conf: Configuration) {
   def copyFromLocal (source: String, dest: String) = {
     val fileSystem = FileSystem.get(conf)
     val (srcPath, dstPath) = new Path(source) -> new Path(dest)
-    if (fileSystem.exists(dstPath)) {
-      println(s"${dstPath} exists!")
-      delFromHdfs(source)
-    }
 
     // Get the filename out of the file path
     val filename = source.substring(source.lastIndexOf('/') + 1, source.length())
