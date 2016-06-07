@@ -29,7 +29,7 @@ object Main {
             if(config.multiband)
               GeoTiff(raster.raster, raster.crs).write(s"${config.output}/B_${config.bands.mkString("")}.tif")
             else
-              raster.raster.bands.zipWithIndex.foreach { case (tile, i) =>
+              raster.raster.bands.zip(config.bands).foreach { case (tile, i) =>
                 GeoTiff(Raster(tile, raster.extent), raster.crs).write(s"${config.output}/B_${i}.tif")
               }
 
