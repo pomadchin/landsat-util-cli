@@ -45,10 +45,6 @@ object MainOptions {
       c.copy(multiband = x)
     }
 
-    opt[String]("hdfsOutput") action { (x, c) =>
-      c.copy(hdfsOutput = x)
-    }
-
     help("help") text "prints this usage text"
   }
 

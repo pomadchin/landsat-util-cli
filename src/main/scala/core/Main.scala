@@ -1,7 +1,6 @@
 package core
 
 import core.cli.MainOptions
-import core.util.HdfsUtil
 
 import com.azavea.landsatutil._
 import geotrellis.raster._
@@ -9,14 +8,11 @@ import geotrellis.vector.Polygon
 import geotrellis.vector.io._
 import geotrellis.vector.io.json.GeoJson
 import geotrellis.raster.io.geotiff._
-import geotrellis.spark.util.SparkUtils
 
 object Main {
   def main(args: Array[String]): Unit = {
     MainOptions.parse(args) match {
       case Some(config) => {
-        lazy val hdfsUtil = HdfsUtil(SparkUtils.hadoopConfiguration)
-
         Landsat8Query()
           .withStartDate(config.getStartDate)
           .withEndDate(config.getEndDate)
@@ -34,8 +30,6 @@ object Main {
               raster.raster.bands.zip(config.bands).foreach { case (tile, i) =>
                 GeoTiff(Raster(tile, raster.extent), raster.crs).write(s"${config.output}/B_${i}.tif")
               }
-
-            if(config.copyToHdfs) hdfsUtil.copyFromLocal(config.output, config.hdfsOutput)
           }
       }
       case None => throw new Exception("No valid arguments passed")

@@ -9,10 +9,8 @@ case class MainArgs(
   cloudCoverage: Double = 80d,
   bands: Seq[String] = Nil,
   output: String = "",
-  multiband: Boolean = false,
-  hdfsOutput: String = ""
+  multiband: Boolean = false
 ) {
   def getStartDate = DateTime.parse(startDate)
   def getEndDate   = DateTime.parse(endDate)
-  def copyToHdfs   = hdfsOutput.nonEmpty
 }
