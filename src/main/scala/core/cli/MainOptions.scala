@@ -45,6 +45,10 @@ object MainOptions {
       c.copy(multiband = x)
     }
 
+    opt[Int]("threads") action { (x, c) =>
+      c.copy(threads = x)
+    }
+
     help("help") text "prints this usage text"
   }
 

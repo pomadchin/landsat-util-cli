@@ -9,7 +9,8 @@ case class MainArgs(
   cloudCoverage: Double = 80d,
   bands: Seq[String] = Nil,
   output: String = "",
-  multiband: Boolean = false
+  multiband: Boolean = false,
+  threads: Int = 1
 ) {
   def getStartDate = DateTime.parse(startDate)
   def getEndDate   = DateTime.parse(endDate)
