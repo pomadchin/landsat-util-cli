@@ -45,10 +45,6 @@ object MainOptions {
       c.copy(multiband = x)
     }
 
-    opt[String]("hdfs") action { (x, c) =>
-      c.copy(hdfs = x)
-    }
-
     opt[String]("hdfsOutput") action { (x, c) =>
       c.copy(hdfsOutput = x)
     }

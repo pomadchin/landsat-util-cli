@@ -10,10 +10,9 @@ case class MainArgs(
   bands: Seq[String] = Nil,
   output: String = "",
   multiband: Boolean = false,
-  hdfs: String = "",
   hdfsOutput: String = ""
 ) {
   def getStartDate = DateTime.parse(startDate)
-  def getEndDate = DateTime.parse(endDate)
-  def copyToHdfs = hdfs.nonEmpty && hdfsOutput.nonEmpty
+  def getEndDate   = DateTime.parse(endDate)
+  def copyToHdfs   = hdfsOutput.nonEmpty
 }

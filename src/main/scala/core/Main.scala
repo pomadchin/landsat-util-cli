@@ -1,26 +1,21 @@
 package core
 
-import geotrellis.raster._
-import com.azavea.landsatutil._
 import core.cli.MainOptions
 import core.util.HdfsUtil
+
+import com.azavea.landsatutil._
+import geotrellis.raster._
 import geotrellis.vector.Polygon
 import geotrellis.vector.io._
 import geotrellis.vector.io.json.GeoJson
 import geotrellis.raster.io.geotiff._
-import org.apache.spark.{SparkConf, SparkContext}
+import geotrellis.spark.util.SparkUtils
 
 object Main {
   def main(args: Array[String]): Unit = {
     MainOptions.parse(args) match {
       case Some(config) => {
-        val sc = new SparkContext(
-          new SparkConf()
-            .setAppName("GeoTrellis LandsatUtil")
-            .setJars(SparkContext.jarOfObject(this).toList)
-        )
-
-        lazy val hdfsUtil = HdfsUtil(config.hdfs, sc.hadoopConfiguration)
+        lazy val hdfsUtil = HdfsUtil(SparkUtils.hadoopConfiguration)
 
         Landsat8Query()
           .withStartDate(config.getStartDate)
@@ -42,8 +37,6 @@ object Main {
 
             if(config.copyToHdfs) hdfsUtil.copyFromLocal(config.output, config.hdfsOutput)
           }
-
-        sc.stop()
       }
       case None => throw new Exception("No valid arguments passed")
     }

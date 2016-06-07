@@ -3,7 +3,7 @@ package core.util
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{Path, FileSystem}
 
-class HdfsUtil(hdfsUri: String, conf: Configuration) {
+class HdfsUtil(conf: Configuration) {
   def copyFromLocal (source: String, dest: String) = {
     val fileSystem = FileSystem.get(conf)
     val (srcPath, dstPath) = new Path(source) -> new Path(dest)
@@ -43,5 +43,5 @@ class HdfsUtil(hdfsUri: String, conf: Configuration) {
 }
 
 object HdfsUtil {
-  def apply(hdfsUri: String, conf: Configuration) = new HdfsUtil(hdfsUri, conf)
+  def apply(conf: Configuration) = new HdfsUtil(conf)
 }
