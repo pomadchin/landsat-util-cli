@@ -3,17 +3,8 @@ package core.util
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{Path, FileSystem}
 
-class HdfsUtil(hdfsUri: String) {
-  def getConfiguration = {
-    val conf = new Configuration()
-    conf.set("fs.default.name", hdfsUri)
-    //disable caching to avoid java.io.IOException: Filesystem closed
-    conf.setBoolean("fs.hdfs.impl.disable.cache", true)
-    conf
-  }
-
+class HdfsUtil(hdfsUri: String, conf: Configuration) {
   def copyFromLocal (source: String, dest: String) = {
-    val conf = getConfiguration
     val fileSystem = FileSystem.get(conf)
     val (srcPath, dstPath) = new Path(source) -> new Path(dest)
     if (fileSystem.exists(dstPath)) {
@@ -30,7 +21,6 @@ class HdfsUtil(hdfsUri: String) {
   }
 
   def copyFromHdfs (source: String, dest: String) = {
-    val conf = getConfiguration
     val fileSystem = FileSystem.get(conf)
     val (srcPath, dstPath) = new Path(source) -> new Path(dest)
     if (fileSystem.exists(dstPath)) println(s"${dstPath} exists!")
@@ -44,8 +34,6 @@ class HdfsUtil(hdfsUri: String) {
   }
 
   def delFromHdfs(path: String) = {
-    val conf = getConfiguration
-
     val fileSystem = FileSystem.get(conf)
     fileSystem.delete(new Path(path), true)
 
@@ -55,5 +43,5 @@ class HdfsUtil(hdfsUri: String) {
 }
 
 object HdfsUtil {
-  def apply(hdfsUri: String) = new HdfsUtil(hdfsUri)
+  def apply(hdfsUri: String, conf: Configuration) = new HdfsUtil(hdfsUri, conf)
 }
