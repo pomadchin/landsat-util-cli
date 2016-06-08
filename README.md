@@ -7,7 +7,7 @@ java -jar ${PWD}/target/scala-2.10/landsat-util-cli-assembly-0.1.0.jar \
      --threads 4 \
      --polygon ${PWD}/data/philly.json \
      --startDate 2014-01-01 \
-     --endDate 2015-01-01 \
+     --endDate 2016-01-01 \
      --bands 4 \
      --output /data/philly 
 ```
