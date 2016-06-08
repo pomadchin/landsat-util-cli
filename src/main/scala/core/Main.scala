@@ -1,12 +1,13 @@
 package core
 
 import core.cli.MainOptions
-import com.azavea.landsatutil._
+
 import geotrellis.raster._
 import geotrellis.vector.Polygon
 import geotrellis.vector.io._
 import geotrellis.vector.io.json.GeoJson
 import geotrellis.raster.io.geotiff._
+import com.azavea.landsatutil._
 
 import scala.concurrent.{ExecutionContext, Future}
 import java.util.concurrent.Executors
