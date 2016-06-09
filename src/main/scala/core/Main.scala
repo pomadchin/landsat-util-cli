@@ -14,7 +14,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import java.util.concurrent.Executors
 import java.io.File
 
-
 object Main {
   def main(args: Array[String]): Unit = {
     MainOptions.parse(args) match {
