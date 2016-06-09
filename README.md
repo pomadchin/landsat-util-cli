@@ -40,11 +40,21 @@ Usage: landsat-util-cli [options]
     --output <value>
           output is a non-empty String property
     --multiband <value>
-          
+          multiband is boolean property, to save as batch of singleband tiles or as a multiband tile
     --threads <value>
-          
+          threads is an int property, specify threads number, every scene processes in one thread
     --crs <value>
-          
+          crs is a string property, specify destination crs to reproject landsat tiles
+    --split <value>
+          split is a boolean property, if true than splits landsat scene into smaller tiles
+    --layoutCols <value>
+          layoutCols is an int property, layout cols for a chunk of a splited landsat tile
+    --layoutRows <value>
+          layoutRows is an int property, layout rows for a chunk of a splited landsat tile
+    --tileCols <value>
+          tileCols is an int property, tile cols for a chunk of a splited landsat tile
+    --tileRows <value>
+          tileRows is an int property, tile rows for a chunk of a splited landsat tile
     --help
           prints this usage text
 ```

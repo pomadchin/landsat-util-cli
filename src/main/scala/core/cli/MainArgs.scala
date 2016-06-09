@@ -1,6 +1,7 @@
 package core.cli
 
 import geotrellis.proj4.CRS
+import geotrellis.raster.TileLayout
 
 import org.joda.time.DateTime
 
@@ -13,9 +14,15 @@ case class MainArgs(
   output: String = "",
   multiband: Boolean = false,
   threads: Int = 1,
-  crs: String = ""
+  crs: String = "",
+  split: Boolean = false,
+  layoutCols: Int = 31,
+  layoutRows: Int = 31,
+  tileCols: Int = 256,
+  tileRows: Int = 256
 ) {
-  def getStartDate = DateTime.parse(startDate)
-  def getEndDate   = DateTime.parse(endDate)
-  def getCrs       = if(crs.nonEmpty) Some(CRS.fromName(crs)) else None
+  def getStartDate  = DateTime.parse(startDate)
+  def getEndDate    = DateTime.parse(endDate)
+  def getCrs        = if(crs.nonEmpty) Some(CRS.fromName(crs)) else None
+  def getTileLayout = TileLayout(layoutCols, layoutRows, tileCols, tileRows)
 }

@@ -44,18 +44,25 @@ object Main {
             val lrr = lr.raster
             val raster: ProjectedRaster[MultibandTile] = config.getCrs.fold(lrr)(lrr.reproject(_))
 
-            (raster: Raster[MultibandTile])
-              .split(TileLayout(31, 31, 256, 256), Split.Options(cropped = false, extend = false))
-              .zipWithIndex foreach { case (chunk, k) =>
-                val (r, rc) = Raster(chunk.tile, chunk.extent) -> raster.crs
-
-                if (config.multiband)
-                  GeoTiff(r, rc).write(s"${output}/${img.sceneId}_B_${config.bands.mkString("")}_${k}.tif")
-                else
-                  r.bands.zip(config.bands).foreach { case (tile, i) =>
-                    GeoTiff(r, rc).write(s"${output}/${img.sceneId}_B_${i}_${k}.tif")
-                  }
-               }
+            if(config.split) {
+              (raster: Raster[MultibandTile])
+                .split(config.getTileLayout, Split.Options(cropped = false, extend = false))
+                .zipWithIndex foreach { case (chunk, k) =>
+                  if (config.multiband)
+                    GeoTiff(chunk.tile, chunk.extent, raster.crs).write(s"${output}/${img.sceneId}_B_${config.bands.mkString("")}_${k}.tif")
+                  else
+                    chunk.tile.bands.zip(config.bands).foreach { case (tile, i) =>
+                      GeoTiff(tile, chunk.extent, raster.crs).write(s"${output}/${img.sceneId}_B_${i}_${k}.tif")
+                    }
+                }
+            } else {
+              if (config.multiband)
+                GeoTiff(raster, raster.crs).write(s"${output}/${img.sceneId}_B_${config.bands.mkString("")}.tif")
+              else
+                raster.bands.zip(config.bands).foreach { case (tile, i) =>
+                  GeoTiff(tile, raster.extent, raster.crs).write(s"${output}/${img.sceneId}_B_${i}.tif")
+                }
+            }
           } }) onComplete {
           case _ => executor.shutdown()
         }
