@@ -1,7 +1,6 @@
 package core
 
 import core.cli.MainOptions
-
 import geotrellis.raster._
 import geotrellis.vector.Polygon
 import geotrellis.vector.io._
@@ -34,7 +33,9 @@ object Main {
             val lr =
               if(img.imageExistsS3()) img.getFromS3(config.bands)
               else img.getFromGoogle(config.bands)
-            val raster = lr.raster
+
+            val lrr = lr.raster
+            val raster = config.getCrs.fold(lrr)(lrr.reproject(_))
             if(config.multiband)
               GeoTiff(raster.raster, raster.crs).write(s"${output}/${img.sceneId}_B_${config.bands.mkString("")}.tif")
             else

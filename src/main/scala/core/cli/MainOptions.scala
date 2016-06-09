@@ -49,6 +49,10 @@ object MainOptions {
       c.copy(threads = x)
     }
 
+    opt[String]("crs") action { (x, c) =>
+      c.copy(crs = x)
+    }
+
     help("help") text "prints this usage text"
   }
 
