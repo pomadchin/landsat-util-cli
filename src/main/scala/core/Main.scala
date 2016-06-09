@@ -27,7 +27,6 @@ object Main {
           * Chunking the scene allows for greater parallism and reduces memory pressure
           * produces by processing each partition.
           */
-
         Future.sequence(Landsat8Query()
           .withStartDate(config.getStartDate)
           .withEndDate(config.getEndDate)
