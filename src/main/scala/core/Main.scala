@@ -1,16 +1,19 @@
 package core
 
 import core.cli.MainOptions
-import geotrellis.raster._
+
 import geotrellis.vector.Polygon
-import geotrellis.vector.io._
 import geotrellis.vector.io.json.GeoJson
 import geotrellis.raster.io.geotiff._
+import geotrellis.vector.io._
+import geotrellis.raster._
+import geotrellis.raster.split._
 import com.azavea.landsatutil._
 
 import scala.concurrent.{ExecutionContext, Future}
 import java.util.concurrent.Executors
 import java.io.File
+
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -19,6 +22,12 @@ object Main {
         val executor = Executors.newFixedThreadPool(config.threads)
         implicit val executionContext = ExecutionContext.fromExecutor(executor)
         val regexp = """^LC8(\d{6})(\d{4})(\d{3})(.)*""".r
+
+        /** Transforms a collection of Landsat image descriptions into RDD of MultibandTiles.
+          * Each landsat scene is downloaded, reprojected and then split into 256x256 chunks.
+          * Chunking the scene allows for greater parallism and reduces memory pressure
+          * produces by processing each partition.
+          */
 
         Future.sequence(Landsat8Query()
           .withStartDate(config.getStartDate)
@@ -35,13 +44,20 @@ object Main {
               else img.getFromGoogle(config.bands)
 
             val lrr = lr.raster
-            val raster = config.getCrs.fold(lrr)(lrr.reproject(_))
-            if(config.multiband)
-              GeoTiff(raster.raster, raster.crs).write(s"${output}/${img.sceneId}_B_${config.bands.mkString("")}.tif")
-            else
-              raster.raster.bands.zip(config.bands).foreach { case (tile, i) =>
-                GeoTiff(Raster(tile, raster.extent), raster.crs).write(s"${output}/${img.sceneId}_B_${i}.tif")
-              }
+            val raster: ProjectedRaster[MultibandTile] = config.getCrs.fold(lrr)(lrr.reproject(_))
+
+            (raster: Raster[MultibandTile])
+              .split(TileLayout(31, 31, 256, 256), Split.Options(cropped = false, extend = false))
+              .zipWithIndex foreach { case (chunk, k) =>
+                val (r, rc) = Raster(chunk.tile, chunk.extent) -> raster.crs
+
+                if (config.multiband)
+                  GeoTiff(r, rc).write(s"${output}/${img.sceneId}_B_${config.bands.mkString("")}_${k}.tif")
+                else
+                  r.bands.zip(config.bands).foreach { case (tile, i) =>
+                    GeoTiff(r, rc).write(s"${output}/${img.sceneId}_B_${i}_${k}.tif")
+                  }
+               }
           } }) onComplete {
           case _ => executor.shutdown()
         }
